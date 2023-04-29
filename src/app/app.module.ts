@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CutomerComponent } from './customer/customer.component';
 import { CutomerService } from './customer.service';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatInputModule} from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { CutomerService } from './customer.service';
     AppRoutingModule,
     BrowserAnimationsModule, 
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    MatToolbarModule,
+    MatInputModule
   ],
   providers: [
     CutomerService
