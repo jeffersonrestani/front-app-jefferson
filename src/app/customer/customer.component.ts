@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CustomerService } from '../service/customer.service';
 import { Customer } from '../model/customer';
+import { DatePipe } from '@angular/common';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+
 
 @Component({
   selector: 'app-customer',
@@ -8,32 +12,85 @@ import { Customer } from '../model/customer';
   styleUrls: ['./customer.component.css']
 })
 
+
 export class CustomerComponent {
 
-  constructor(private service: CustomerService){
-  }
+  success: boolean = false;
+  errors!: String[];
+  message = '';
+  displayedColumns: string[] = ['idCustomer', 'firstNameCustomer', 'lastNameCustomer', 'cpfCustomer', 'birthdateCustomer', 'dateCreatedCustomer', 'monthlyIncomeCustomer', 'emailCustomer', 'statusCustomer', 'findCustomer', 'deleteCustomer'];
+  ELEMENT_DATA: Customer[] = [];
+  dataSource = new MatTableDataSource<Customer>(this.ELEMENT_DATA);
 
-  ngOnInit(): void {
-    this.saveCustomer();
-  }
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  customer: Customer = {
-    idCustomer: '',
-    firstNameCustomer: 'Fabrícia',
-    lastNameCustomer: 'Passerini',
-    birthdateCustomer: '09/08/1990',
-    dateCreatedCustomer: '',
-    monthlyIncomeCustomer: '200',
-    cpfCustomer: '23499359065',
-    emailCustomer: 'fabricia@teste.com',
-    passwordCustomer: '121212',
-    statusCustomer: "B"
-  }
+  constructor(
+    private service: CustomerService
+  ){}
 
-  saveCustomer() {
-    this.service.save(this.customer).subscribe(response => {
-      console.log(response)
-    })
+ngOnInit (): void {
+  this.listCustomer();
+}
+
+customer: Customer ={
+  idCustomer: '',
+  firstNameCustomer: '',
+  lastNameCustomer: '',
+  birthdateCustomer: '',
+  dateCreatedCustomer:'',
+  monthlyIncomeCustomer:'',
+  cpfCustomer: '',
+  emailCustomer: '',
+  passwordCustomer: '',
+  statusCustomer: '',
+}
+
+saveCustomer() {
+  const datePipe = new DatePipe('en-US');
+  this.customer.birthdateCustomer = datePipe.transform(
+    this.customer.birthdateCustomer, 'dd/MM/yyyy');
+  this.service.save(this.customer).subscribe({next: response => {
+    this.success = true;
+    this.errors = [];
+  //this.toast.success('O cliente '+ this.customer.firstNameCustomer +' '+ this.customer.lastNameCustomer +' foi cadastrado com sucesso!', 'Sucesso!!!');      
+  }, error: ex => {
+    if (ex.error.errors) {
+      this.errors = ex.error.errors;
+      this.success = false;
+      ex.error.errors.forEach((element:any) => {
+        //this.toast.error(element.message, 'Atenção!!!');                    
+      });
+    } else {
+        this.success = false;
+        this.errors = ex.error.errors;
+      //this.toast.error(ex.error.message, 'Atenção!');
+    }
+  }})
+}
+
+listCustomer() {
+  this.service.list().subscribe((response: any) => {
+    this.ELEMENT_DATA = response.result as Customer[]; // Verifique o tipo e faça a conversão
+    this.dataSource = new MatTableDataSource<Customer>(this.ELEMENT_DATA);
+    this.dataSource.paginator = this.paginator;
+  });
+}
+
+deleteCustomer(customer: Customer) {
+  if (window.confirm('Deseja realmente excluir este contato?')) {
+    this.service.delete(customer.idCustomer).subscribe((response: any) => {
+      this.message = response.result.result as string;
+      window.alert(this.message);
+      this.listCustomer();
+    });
   }
 }
 
+findCustomer(customer: Customer) {    
+  this.service.findById(customer.idCustomer).subscribe((response: any) => {
+    this.customer = response.result as Customer;
+
+  });
+}
+
+}
