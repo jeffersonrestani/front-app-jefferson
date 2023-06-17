@@ -52,18 +52,17 @@ saveCustomer() {
   this.service.save(this.customer).subscribe({next: response => {
     this.success = true;
     this.errors = [];
-  //this.toast.success('O cliente '+ this.customer.firstNameCustomer +' '+ this.customer.lastNameCustomer +' foi cadastrado com sucesso!', 'Sucesso!!!');      
+    
   }, error: ex => {
     if (ex.error.errors) {
       this.errors = ex.error.errors;
       this.success = false;
       ex.error.errors.forEach((element:any) => {
-        //this.toast.error(element.message, 'Atenção!!!');                    
+                  
       });
     } else {
         this.success = false;
         this.errors = ex.error.errors;
-      //this.toast.error(ex.error.message, 'Atenção!');
     }
   }})
 }

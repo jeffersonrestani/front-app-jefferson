@@ -18,12 +18,24 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MenuComponent } from './menu/menu.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { HomeComponent } from './home/home.component';
+import { CategoryComponent } from './category/category.component';
+import { ProductComponent } from './product/product.component';
+import { CategoryService } from './service/category.service';
+import { ProductService } from './service/product.service';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    CustomerComponent
+    CustomerComponent,
+    MenuComponent,
+    HomeComponent,
+    CategoryComponent,
+    ProductComponent
   ],
   imports: [
     BrowserModule,
@@ -40,10 +52,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatCardModule,
     MatTabsModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatMenuModule,
+    MatSelectModule
   ],
   providers: [
     CustomerService,
+    CategoryService,
+    ProductService,
     DatePipe //serviço que formata a data
   ],
   bootstrap: [AppComponent]
